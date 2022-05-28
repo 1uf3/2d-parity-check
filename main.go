@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"sync"
 )
 
 var ErrMultiMiss = errors.New("Multiple byte missed")
@@ -48,40 +49,48 @@ func main() {
 
 func get2Ddiv(b [][]int) (dx, dy int) {
 	dy = len(b)
-	for _, v := range b {
-		dx = len(v)
-		break
-	}
+	dx = len(b[0])
 	return
 }
 
 func evenCheck(b [][]int, dx, dy int) (x, y int, err error) {
-	missX := 0
-	for i, v := range b {
-		l := 0
-		for _, vv := range v {
-			l += vv
-		}
-		if l%2 != 0 {
-			missX++
-			x = i
-		}
-	}
+	wg := &sync.WaitGroup{}
 
+	missX := 0
 	missY := 0
-	for i := 0; i < dx; i++ {
-		c := 0
-		for ii, vv := range b {
-			if i == dx-1 && ii == dy-1 {
-				continue
+	wg.Add(1)
+	go func() {
+		for i, v := range b {
+			l := 0
+			for _, vv := range v {
+				l += vv
 			}
-			c += vv[i]
+			if l%2 != 0 {
+				missX++
+				x = i
+			}
 		}
-		if c%2 != 0 {
-			missY++
-			y = i
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	go func() {
+		for i := 0; i < dx; i++ {
+			c := 0
+			for ii, vv := range b {
+				if i == dx-1 && ii == dy-1 {
+					break
+				}
+				c += vv[i]
+			}
+			if c%2 != 0 {
+				missY++
+				y = i
+			}
 		}
-	}
+		wg.Done()
+	}()
+	wg.Wait()
 
 	if missX > 1 && missY > 1 {
 		return x, y, ErrMultiMiss
@@ -91,32 +100,43 @@ func evenCheck(b [][]int, dx, dy int) (x, y int, err error) {
 }
 
 func oddCheck(b [][]int, dx, dy int) (x, y int, err error) {
-	missX := 0
-	for i, v := range b {
-		l := 0
-		for _, vv := range v {
-			l += vv
-		}
-		if l%2 == 0 {
-			missX++
-			x = i
-		}
-	}
+	wg := &sync.WaitGroup{}
 
+	missX := 0
 	missY := 0
-	for i := 0; i < dx; i++ {
-		c := 0
-		for ii, vv := range b {
-			if i == dx-1 && ii == dy-1 {
-				continue
+	wg.Add(1)
+	go func() {
+		for i, v := range b {
+			l := 0
+			for _, vv := range v {
+				l += vv
 			}
-			c += vv[i]
+			if l%2 == 0 {
+				missX++
+				x = i
+			}
 		}
-		if c%2 == 0 {
-			missY++
-			y = i
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	go func() {
+		for i := 0; i < dx; i++ {
+			c := 0
+			for ii, vv := range b {
+				if i == dx-1 && ii == dy-1 {
+					continue
+				}
+				c += vv[i]
+			}
+			if c%2 == 0 {
+				missY++
+				y = i
+			}
 		}
-	}
+		wg.Done()
+	}()
+	wg.Wait()
 
 	if missX > 1 && missY > 1 {
 		return x, y, ErrMultiMiss
@@ -128,10 +148,8 @@ func oddCheck(b [][]int, dx, dy int) (x, y int, err error) {
 func correction(b [][]int, x, y int) ([][]int, error) {
 	if b[x][y] == 1 {
 		b[x][y] = 0
-	} else if b[x][y] == 0 {
-		b[x][y] = 1
 	} else {
-		return nil, ErrIsNotBit
+		b[x][y] = 1
 	}
 	return b, nil
 }
