@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-var ErrMultiMiss = errors.New("Multiple byte missed")
+var ErrMultiMiss = errors.New("Multiple bit missed")
 var ErrIsNotBit = errors.New("it is not 1bit")
 
 func main() {
