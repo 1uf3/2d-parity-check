@@ -17,13 +17,7 @@ func ParityEvenCheck2D(b [][]int) ([][]int, error) {
 	if x < 0 {
 		return b, nil
 	}
-	// 	if x != y {
-	// 		return nil, errors.New("Miss Detected! but cannot correction this.")
-	// 	}
-	cb, err := correction(b, x, y)
-	if err != nil {
-		return nil, err
-	}
+	cb := correction(b, x, y)
 	return cb, nil
 }
 
@@ -36,13 +30,7 @@ func ParityOddCheck2D(b [][]int) ([][]int, error) {
 	if x < 0 {
 		return b, nil
 	}
-	// 	if x != y {
-	// 		return nil, errors.New("Miss Detected! but cannot correction this.")
-	// 	}
-	cb, err := correction(b, x, y)
-	if err != nil {
-		return nil, err
-	}
+	cb := correction(b, x, y)
 	return cb, nil
 }
 
@@ -146,11 +134,11 @@ func oddCheck(b [][]int, dx, dy int) (x, y int, err error) {
 	return
 }
 
-func correction(b [][]int, x, y int) ([][]int, error) {
+func correction(b [][]int, x, y int) [][]int {
 	if b[x][y] == 1 {
 		b[x][y] = 0
 	} else {
 		b[x][y] = 1
 	}
-	return b, nil
+	return b
 }
