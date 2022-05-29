@@ -8,9 +8,28 @@ import (
 var ErrMultiMiss = errors.New("Multiple bit missed")
 var ErrIsNotBit = errors.New("it is not 1bit")
 
-func ParityCheck2D(b [][]int) ([][]int, error) {
+func ParityEvenCheck2D(b [][]int) ([][]int, error) {
 	dx, dy := get2Ddiv(b)
 	x, y, err := evenCheck(b, dx, dy)
+	if err != nil {
+		return nil, err
+	}
+	if x < 0 {
+		return b, nil
+	}
+	// 	if x != y {
+	// 		return nil, errors.New("Miss Detected! but cannot correction this.")
+	// 	}
+	cb, err := correction(b, x, y)
+	if err != nil {
+		return nil, err
+	}
+	return cb, nil
+}
+
+func ParityOddCheck2D(b [][]int) ([][]int, error) {
+	dx, dy := get2Ddiv(b)
+	x, y, err := oddCheck(b, dx, dy)
 	if err != nil {
 		return nil, err
 	}
