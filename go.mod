@@ -1,4 +1,4 @@
-module main
+module parityc
 
 go 1.18
 
