@@ -14,9 +14,9 @@ func ParityCheck2D(b [][]int) ([][]int, error) {
 	if err != nil {
 		return nil, err
 	}
-	// 	if x < 0 {
-	// 		return b, nil
-	// 	}
+	if x < 0 {
+		return b, nil
+	}
 	// 	if x != y {
 	// 		return nil, errors.New("Miss Detected! but cannot correction this.")
 	// 	}
@@ -40,9 +40,9 @@ func evenCheck(b [][]int, dx, dy int) (x, y int, err error) {
 	x, y = 0, 0
 	wg.Add(1)
 	go func() {
-		for i, v := range b {
+		for i := 0; i < dy-1; i++ {
 			l := 0
-			for _, vv := range v {
+			for _, vv := range b[i] {
 				l += vv
 			}
 			if l%2 != 0 {
@@ -55,12 +55,9 @@ func evenCheck(b [][]int, dx, dy int) (x, y int, err error) {
 
 	wg.Add(1)
 	go func() {
-		for i := 0; i < dx; i++ {
+		for i := 0; i < dx-1; i++ {
 			c := 0
-			for ii, vv := range b {
-				if i == dx-1 && ii == dy-1 {
-					break
-				}
+			for _, vv := range b {
 				c += vv[i]
 			}
 			if c%2 != 0 {
@@ -76,9 +73,9 @@ func evenCheck(b [][]int, dx, dy int) (x, y int, err error) {
 		return x, y, ErrMultiMiss
 	}
 
-	// 	if missX == 0 && missY == 0 {
-	// 		return -1, 0, nil
-	// 	}
+	if missX == 0 && missY == 0 {
+		return -1, 0, nil
+	}
 
 	return
 }
