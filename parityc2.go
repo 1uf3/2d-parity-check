@@ -87,9 +87,9 @@ func oddCheck(b [][]int, dx, dy int) (x, y int, err error) {
 	missY := 0
 	wg.Add(1)
 	go func() {
-		for i, v := range b {
+		for i := 0; i < dy-1; i++ {
 			l := 0
-			for _, vv := range v {
+			for _, vv := range b[i] {
 				l += vv
 			}
 			if l%2 == 0 {
@@ -102,12 +102,9 @@ func oddCheck(b [][]int, dx, dy int) (x, y int, err error) {
 
 	wg.Add(1)
 	go func() {
-		for i := 0; i < dx; i++ {
+		for i := 0; i < dx-1; i++ {
 			c := 0
-			for ii, vv := range b {
-				if i == dx-1 && ii == dy-1 {
-					continue
-				}
+			for _, vv := range b {
 				c += vv[i]
 			}
 			if c%2 == 0 {
@@ -121,6 +118,10 @@ func oddCheck(b [][]int, dx, dy int) (x, y int, err error) {
 
 	if missX > 1 && missY > 1 {
 		return x, y, ErrMultiMiss
+	}
+
+	if missX == 0 && missY == 0 {
+		return -1, 0, nil
 	}
 
 	return
